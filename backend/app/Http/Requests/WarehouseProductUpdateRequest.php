@@ -22,7 +22,7 @@ class WarehouseProductUpdateRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'stock' => 'required|integer|min:1',
+            'stock' => 'required|integer|min:1', 
         ];
     }
 }

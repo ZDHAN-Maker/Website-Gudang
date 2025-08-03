@@ -47,9 +47,7 @@ Class MerchantService
         }
         $this->merchantRepository->delete($id);
     }
-
-
-
+    
     public function update(int $id, array $data)
     {
         $fields =['id','photo'];

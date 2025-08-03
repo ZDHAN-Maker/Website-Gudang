@@ -10,7 +10,7 @@ use Illuminate\Http\Request;
 
 class WarehouseController extends Controller
 {
-     Private WarehouseService $warehouseService;
+     private WarehouseService $warehouseService;
 
     public function __construct(WarehouseService $warehouseService)
     {
@@ -40,7 +40,7 @@ class WarehouseController extends Controller
     public function store(WarehouseRequest $request)
     {
         $warehouses = $this->warehouseService->create($request->validated());
-        return response()->json(new WarehouseService($warehouses),201);
+        return response()->json(new WarehouseResource($warehouses),201);
     }
 
     public function update(WarehouseRequest $request, int $id)

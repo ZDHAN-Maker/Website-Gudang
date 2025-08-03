@@ -20,14 +20,14 @@ class WarehouseProductController extends Controller
     {
         $request->validate([
             'product_id' => 'required|exists:products, id',
-            'stock ' => 'required |integer|min:1',
+            'stock ' => 'required|integer|min:1',
         ]);
 
         $this->warehouseService->attachProduct(
             $warehouseId,
-            $request->input('products_id'),
+            $request->input('product_id'),
             $request->input('stock')
-        );
+        ); 
 
         return response()->json(['message' => 'products Attached Seccesfully']);
     }
