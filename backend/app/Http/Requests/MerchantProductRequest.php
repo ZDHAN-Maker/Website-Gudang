@@ -11,7 +11,7 @@ class MerchantProductRequest extends FormRequest
      */
     public function authorize(): bool
     {
-        return false;
+        return true;
     }
 
     /**
@@ -22,7 +22,9 @@ class MerchantProductRequest extends FormRequest
     public function rules(): array
     {
         return [
-            //
+            'product_id' => ['required','exists:products,id'],
+            'warehouse_id' => ['required' , 'exists:warehouses,id'],
+            'stock' => 'required|integer|min:1',
         ];
     }
 }

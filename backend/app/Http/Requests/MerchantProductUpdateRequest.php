@@ -11,7 +11,7 @@ class MerchantProductUpdateRequest extends FormRequest
      */
     public function authorize(): bool
     {
-        return false;
+        return true;
     }
 
     /**
@@ -22,7 +22,8 @@ class MerchantProductUpdateRequest extends FormRequest
     public function rules(): array
     {
         return [
-            //
+            'warehouse_id' => ['required', 'exists:warehouse,id'],
+            'stock' => 'required|integer|min:0',
         ];
     }
 }
