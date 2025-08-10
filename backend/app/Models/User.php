@@ -9,9 +9,10 @@ use Illuminate\Notifications\Notifiable;
 use Illuminate\Support\Facades\Storage;
 use Laravel\Sanctum\HasApiTokens;
 use Spatie\Permission\Traits\HasRoles;
+
 class User extends Authenticatable
 {
-    
+
     /** @use HasFactory<\Database\Factories\UserFactory> */
     use HasApiTokens, HasFactory, Notifiable, HasRoles;
 
@@ -20,6 +21,7 @@ class User extends Authenticatable
      *
      * @var list<string>
      */
+    protected $table = 'users';
     protected $fillable = [
         'name',
         'email',
@@ -52,16 +54,14 @@ class User extends Authenticatable
     }
     public function getPhotoAttribute($value)
     {
-        if (!$value)
-        {
+        if (!$value) {
             return null;
         }
         return url(Storage::url($value));
-    } 
+    }
 
     public function merchant()
     {
-        return $this->hasOne(Merchant::class,'keeper_id','id');
+        return $this->hasOne(Merchant::class, 'keeper_id', 'id');
     }
-    
 }
