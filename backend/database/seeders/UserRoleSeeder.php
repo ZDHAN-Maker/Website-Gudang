@@ -42,7 +42,7 @@ class UserRoleSeeder extends Seeder
                 'email' => $roleName . '@example.com',
                 'phone' => fake()->phoneNumber(),
                 'photo' => fake()->imageUrl(200, 200, 'people', true, 'profile'),
-                'password' => Hash::make('password123'), // password default
+                'password' => Hash::make('password123'),
             ]);
 
             // Assign role ke user

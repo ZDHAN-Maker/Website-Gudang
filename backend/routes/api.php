@@ -12,7 +12,7 @@ use App\Http\Controllers\WarehouseProductController;
 Route::post('/token-login', [AuthController::class, 'tokenLogin']);
 Route::post('/register', [AuthController::class, 'register']);
 Route::post('/login', [AuthController::class, 'login']);
-
+Route::post('/logout', [AuthController::class, 'logout']);
 
 
 Route::middleware('auth:sanctum')->group(function () {
@@ -25,14 +25,13 @@ Route::middleware('auth:sanctum')->group(function () {
 
 
 Route::middleware('auth:sanctum')->group(function () {
-    // Standar REST API untuk merchant
-    Route::get('/merchants', [MerchantController::class, 'index']);         // List semua merchant
-    Route::get('/merchants/{id}', [MerchantController::class, 'show']);     // Detail merchant
-    Route::post('/merchants', [MerchantController::class, 'store']);        // Buat merchant baru
-    Route::put('/merchants/{id}', [MerchantController::class, 'update']);   // Perbarui merchant
-    Route::delete('/merchants/{id}', [MerchantController::class, 'destroy']);// Hapus merchant
-
-    // Endpoint profil merchant milik user saat ini
+    Route::get('/merchants', [MerchantController::class, 'index']);
+    Route::get('/merchants/{id}', [MerchantController::class, 'show']);
+    Route::post('/merchants', [MerchantController::class, 'store']);
+    Route::put('/merchants/{id}', [MerchantController::class, 'update']);
+    Route::delete('/merchants/{id}', [MerchantController::class, 'destroy']);
+    
+    // Profile merchant berdasarkan user login
     Route::get('/my-merchant', [MerchantController::class, 'getMyMerchantProfile']);
 });
 
