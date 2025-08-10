@@ -11,7 +11,7 @@ class Merchant extends Model
     //
     use SoftDeletes;
 
-    protected $fillable = ['name','address','photo','phone','keepre_id'];
+    protected $fillable = ['name','address','photo','phone','keeper_id'];
 
     public function keeper()
     {
