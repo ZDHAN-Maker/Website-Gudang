@@ -1,7 +1,7 @@
 <?php
 
 namespace App\Models;
-
+use App\Models\User;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Support\Facades\Storage;
@@ -10,6 +10,7 @@ class Merchant extends Model
 {
     //
     use SoftDeletes;
+    protected $table = 'merchants';
 
     protected $fillable = ['name','address','photo','phone','keeper_id'];
 

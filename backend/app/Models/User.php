@@ -2,26 +2,37 @@
 
 namespace App\Models;
 
-// use Illuminate\Contracts\Auth\MustVerifyEmail;
-use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
-use Illuminate\Support\Facades\Storage;
 use Laravel\Sanctum\HasApiTokens;
+use Illuminate\Database\Eloquent\Factories\HasFactory;
+use Illuminate\Support\Facades\Log;
 use Spatie\Permission\Traits\HasRoles;
+use Illuminate\Support\Facades\Storage;
 
 class User extends Authenticatable
 {
-
-    /** @use HasFactory<\Database\Factories\UserFactory> */
     use HasApiTokens, HasFactory, Notifiable, HasRoles;
+
+    /**
+     * Spatie Permission guard name
+     *
+     * @var string
+     */
+    protected $guard_name = 'web';
+
+    /**
+     * Table name.
+     *
+     * @var string
+     */
+    protected $table = 'users';
 
     /**
      * The attributes that are mass assignable.
      *
-     * @var list<string>
+     * @var array<int, string>
      */
-    protected $table = 'users';
     protected $fillable = [
         'name',
         'email',
@@ -33,7 +44,7 @@ class User extends Authenticatable
     /**
      * The attributes that should be hidden for serialization.
      *
-     * @var list<string>
+     * @var array<int, string>
      */
     protected $hidden = [
         'password',
@@ -41,9 +52,9 @@ class User extends Authenticatable
     ];
 
     /**
-     * Get the attributes that should be cast.
+     * The attributes that should be cast.
      *
-     * @return array<string, string>
+     * @var array<string, string>
      */
     protected function casts(): array
     {
@@ -52,16 +63,28 @@ class User extends Authenticatable
             'password' => 'hashed',
         ];
     }
+
+    /**
+     * Accessor for photo attribute.
+     */
     public function getPhotoAttribute($value)
     {
-        if (!$value) {
-            return null;
-        }
-        return url(Storage::url($value));
+        return $value ? url(Storage::url($value)) : null;
     }
 
+    /**
+     * Relationship to Merchant model.
+     */
     public function merchant()
     {
         return $this->hasOne(Merchant::class, 'keeper_id', 'id');
+    }
+    public static function boot()
+    {
+        parent::boot();
+
+        static::retrieved(function ($model) {
+            Log::info('User model uses table: ' . $model->getTable());
+        });
     }
 }
