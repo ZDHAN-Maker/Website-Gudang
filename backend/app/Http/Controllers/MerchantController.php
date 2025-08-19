@@ -21,7 +21,7 @@ class MerchantController extends Controller
 
     public function index()
     {
-        $fields = ['id', 'name', 'photo', 'tagline'];
+        $fields = ['id', 'name', 'dn', 'tagline'];
         $merchant = $this->merchantService->getAll($fields);
         return response()->json(MerchantResource::collection($merchant));
     }
