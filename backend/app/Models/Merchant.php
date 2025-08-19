@@ -16,7 +16,7 @@ class Merchant extends Model
 
     public function keeper()
     {
-        return $this->belongsTo(User::class,'keeper_id');
+        return $this->belongsTo(\App\Models\User::class,'keeper_id');
     }
     
     public  function products()
