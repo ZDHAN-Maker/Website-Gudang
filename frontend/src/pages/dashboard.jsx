@@ -1,4 +1,5 @@
 import React from "react";
+import { Link } from "react-router-dom";
 
 
 export default function Dashboard() {
@@ -6,15 +7,22 @@ export default function Dashboard() {
     <div className="flex min-h-screen bg-gray-50">
       {/* Sidebar */}
       <aside className="w-64 bg-white border-r shadow-sm">
-        <div className="p-4 text-2xl font-bold text-blue-600">MONDAY</div>
-
-        <nav className="mt-6">
-          <ul className="space-y-2 px-4">
-            <li className="text-blue-600 font-semibold">Overview</li>
-            <li className="hover:text-blue-500">Products</li>
-            <li className="hover:text-blue-500">Categories</li>
-            <li className="hover:text-blue-500">Warehouses</li>
-            <li className="hover:text-blue-500">Merchants</li>
+        <div className="p-4 text-2xl font-bold text-blue-600 ">MONDAY</div>
+        <nav className="mt-6 text-gray-500 p-5 mb-2"> Main Menu
+          <ul className="space-y-2 px-4 text-black">
+            <li className="hover:text-blue-500 mb-5 mt-5 cursor-pointer">
+                <Link to="/dashboard">Overview</Link>
+            </li>
+            <li className="hover:text-blue-500 mb-5 mt-5 cursor-pointer">
+                <Link to="./Product.jsx">Product</Link>
+            </li>
+            <li className="hover:text-blue-500 mb-5 mt-5 cursor-pointer">
+                <Link to="./Categories.jsx">Categories</Link></li>
+            <li className="hover:text-blue-500 mb-5 mt-5 cursor-pointer">
+                <Link to="./Warehouses.jsx">Warehouses</Link></li>
+            <li className="hover:text-blue-500 mb-5 mt-5 cursor-pointer">
+                <Link to="./Merchants.jsx">Merchants</Link>
+            </li>
           </ul>
         </nav>
 
@@ -34,7 +42,7 @@ export default function Dashboard() {
       <main className="flex-1 p-6">
         {/* Topbar */}
         <div className="flex justify-between items-center mb-6">
-          <div className="flex space-x-4">
+          <div className="flex space-x-4 border p-2 rounded-lg bg-white shadow text-black ">Overview
             <button className="p-2 bg-gray-100 rounded-full">🔍</button>
             <button className="p-2 bg-gray-100 rounded-full">🔔</button>
             <button className="p-2 bg-green-100 rounded-full text-green-600 font-bold">
