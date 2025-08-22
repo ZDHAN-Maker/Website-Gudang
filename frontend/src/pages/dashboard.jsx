@@ -1,27 +1,29 @@
 import React from "react";
 import { Link } from "react-router-dom";
 
-
 export default function Dashboard() {
   return (
     <div className="flex min-h-screen bg-gray-50">
       {/* Sidebar */}
       <aside className="w-64 bg-white border-r shadow-sm">
         <div className="p-4 text-2xl font-bold text-blue-600 ">MONDAY</div>
-        <nav className="mt-6 text-gray-500 p-5 mb-2"> Main Menu
+        <nav className="mt-6 text-gray-500 p-5 mb-2">
+          Main Menu
           <ul className="space-y-2 px-4 text-black">
             <li className="hover:text-blue-500 mb-5 mt-5 cursor-pointer">
-                <Link to="/dashboard">Overview</Link>
+              <Link to="/dashboard">Overview</Link>
             </li>
             <li className="hover:text-blue-500 mb-5 mt-5 cursor-pointer">
-                <Link to="./Product.jsx">Product</Link>
+              <Link to="/dashboard/product">Product</Link>
             </li>
             <li className="hover:text-blue-500 mb-5 mt-5 cursor-pointer">
-                <Link to="./Categories.jsx">Categories</Link></li>
+              <Link to="/dashboard/categories">Categories</Link>
+            </li>
             <li className="hover:text-blue-500 mb-5 mt-5 cursor-pointer">
-                <Link to="./Warehouses.jsx">Warehouses</Link></li>
+              <Link to="/dashboard/warehouses">Warehouses</Link>
+            </li>
             <li className="hover:text-blue-500 mb-5 mt-5 cursor-pointer">
-                <Link to="./Merchants.jsx">Merchants</Link>
+              <Link to="/dashboard/merchants">Merchants</Link>
             </li>
           </ul>
         </nav>
@@ -42,7 +44,8 @@ export default function Dashboard() {
       <main className="flex-1 p-6">
         {/* Topbar */}
         <div className="flex justify-between items-center mb-6">
-          <div className="flex space-x-4 border p-2 rounded-lg bg-white shadow text-black ">Overview
+          <div className="flex space-x-4 border p-2 rounded-lg bg-white shadow text-black ">
+            Overview
             <button className="p-2 bg-gray-100 rounded-full">🔍</button>
             <button className="p-2 bg-gray-100 rounded-full">🔔</button>
             <button className="p-2 bg-green-100 rounded-full text-green-600 font-bold">
@@ -61,28 +64,33 @@ export default function Dashboard() {
         {/* Overview Cards */}
         <div className="grid grid-cols-3 gap-6 mb-6">
           <div className="bg-white p-4 rounded-xl shadow">
-            <p className="text-gray-500">Total Revenue</p>
-            <h2 className="text-2xl font-bold">Rp 2.164.800</h2>
+            <p className="text-black">Total Revenue</p>
+            <h2 className="text-2xl font-bold text-black">Rp 0</h2>
           </div>
           <div className="bg-white p-4 rounded-xl shadow">
-            <p className="text-gray-500">Total Transactions</p>
-            <h2 className="text-2xl font-bold">1</h2>
+            <p className="text-black">Total Transactions</p>
+            <h2 className="text-2xl font-bold text-black">0</h2>
           </div>
           <div className="bg-white p-4 rounded-xl shadow">
-            <p className="text-gray-500">Products Sold</p>
-            <h2 className="text-2xl font-bold">16</h2>
+            <p className="text-black">Products Sold</p>
+            <h2 className="text-2xl font-bold text-black">0</h2>
           </div>
         </div>
 
         {/* Promo Card */}
-        <div className="bg-blue-600 text-white p-6 rounded-xl mb-6 shadow">
-          <h3 className="text-lg font-bold">Access Pro Featured</h3>
-          <p className="mt-2">
-            Track, Manage, and Distribute <br /> Stock Easily! 🚀
-          </p>
-          <button className="mt-4 bg-white text-blue-600 px-4 py-2 rounded-lg font-semibold">
-            Upgrade Now
-          </button>
+        <div className="grid grid-cols-2 gap-6">
+          <div className="bg-blue-600 text-white p-6 rounded-xl mb-6 shadow border">
+            <h3 className="text-lg font-bold">Access Pro Featured</h3>
+            <p className="mt-2">
+              Track, Manage, and Distribute <br /> Stock Easily! 🚀
+            </p>
+            <button className="mt-4 bg-white text-blue-600 px-4 py-2 rounded-lg font-semibold">
+              Upgrade Now
+            </button>
+          </div>
+          <div className="bg-white p-6 rounded-xl shadow mb-6">
+            <h3 className="text-lg text-black">Lastes Transaction</h3>
+          </div>
         </div>
 
         {/* Lastest Transaction */}
