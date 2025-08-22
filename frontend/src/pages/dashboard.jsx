@@ -1,5 +1,6 @@
-import React from "react";
+
 import { Link } from "react-router-dom";
+import { Outlet } from "react-router-dom";
 
 export default function Dashboard() {
   return (
@@ -28,6 +29,10 @@ export default function Dashboard() {
           </ul>
         </nav>
 
+        <div className="content">
+          {/* 🔑 Halaman child (Product, Categories, dll) akan muncul di sini */}
+          <Outlet />
+        </div>
         <div className="mt-8 px-4">
           <h3 className="text-sm text-gray-500 font-semibold mb-2">
             Account Settings
@@ -44,8 +49,8 @@ export default function Dashboard() {
       <main className="flex-1 p-6">
         {/* Topbar */}
         <div className="flex justify-between items-center mb-6">
-          <div className="flex space-x-4 border p-2 rounded-lg bg-white shadow text-black ">
-            Overview
+          <div className="flex space-x-4 border p-2 rounded-lg bg-white shadow ">
+            <p className="text-black ">Overview</p>
             <button className="p-2 bg-gray-100 rounded-full">🔍</button>
             <button className="p-2 bg-gray-100 rounded-full">🔔</button>
             <button className="p-2 bg-green-100 rounded-full text-green-600 font-bold">
