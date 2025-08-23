@@ -29,10 +29,7 @@ export default function Dashboard() {
           </ul>
         </nav>
 
-        <div className="content">
-          {/* 🔑 Halaman child (Product, Categories, dll) akan muncul di sini */}
-          <Outlet />
-        </div>
+        
         <div className="mt-8 px-4">
           <h3 className="text-sm text-gray-500 font-semibold mb-2">
             Account Settings
@@ -112,6 +109,10 @@ export default function Dashboard() {
               <p className="text-blue-600 font-bold">Rp 2.164.800</p>
             </div>
           </div>
+        </div>
+        <div className="content">
+          {/* 🔑 Halaman child (Product, Categories, dll) akan muncul di sini */}
+          <Outlet />
         </div>
       </main>
     </div>
