@@ -3,7 +3,6 @@
 namespace App\Http\Controllers;
 
 use App\Services\TransactionProductService;
-use Illuminate\Database\Eloquent\ModelNotFoundException;
 
 class TransactionProductController extends Controller
 {
@@ -17,7 +16,7 @@ class TransactionProductController extends Controller
     // Menampilkan produk apa saja yang ada di dalam transaksi tertentu
     public function index(int $transactionId)
     {
-        $items = $this->transactionService->getItemsByTransaction($transactionId);
+        $items = $this->transactionProductService->getItemsByTransaction($transactionId);
 
         return response()->json([
             'message' => 'Transaction items retrieved successfully',
