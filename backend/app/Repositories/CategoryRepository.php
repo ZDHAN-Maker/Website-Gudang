@@ -8,7 +8,8 @@ class CategoryRepository
 {
     public function getAll(array $fields)
     {
-        return Category::select($fields)->lates()->pagiante(10);
+        // Perbaikan: latest() dan paginate()
+        return Category::select($fields)->latest()->paginate(10);
     }
 
     public function getById(int $id, array $fields)
@@ -16,12 +17,12 @@ class CategoryRepository
         return Category::select($fields)->findOrFail($id);
     }
 
-    public function create (array $data)
+    public function create(array $data)
     {
         return Category::create($data);
     }
 
-    public function update (int $id, array $data)
+    public function update(int $id, array $data)
     {
         $category = Category::findOrFail($id);
         $category->update($data);
@@ -30,7 +31,8 @@ class CategoryRepository
 
     public function delete(int $id)
     {
-        $category = Category::findOdFail($id);
+        // Perbaikan: findOrFail
+        $category = Category::findOrFail($id);
         $category->delete();
     }
 }

@@ -4,7 +4,7 @@ import Dashboard from "./pages/dashboard.jsx";
 import Categories from "./pages/Categories.jsx";
 import Warehouses from "./pages/Warehouses.jsx";
 import Merchants from "./pages/Merchants.jsx";
-import Product from "./pages/Product.jsx";
+import Product from "./pages/Products.jsx";
 function App() {
   return (
      <Routes>
@@ -12,7 +12,7 @@ function App() {
       
       {/* Parent dashboard */}
       <Route path="/dashboard" element={<Dashboard />}>
-        <Route path="product" element={<Product />} />
+        <Route path="products" element={<Product />} />
         <Route path="categories" element={<Categories />} />
         <Route path="warehouses" element={<Warehouses />} />
         <Route path="merchants" element={<Merchants />} />

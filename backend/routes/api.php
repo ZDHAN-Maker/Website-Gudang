@@ -5,6 +5,7 @@ use App\Http\Controllers\AuthController;
 use App\Http\Controllers\CategoryController;
 use App\Http\Controllers\MerchantController;
 use App\Http\Controllers\MerchantProductController;
+use App\Http\Controllers\ProductController;
 use App\Http\Controllers\WarehouseController;
 use App\Http\Controllers\WarehouseProductController;
 
@@ -47,4 +48,10 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::post('/warehouses/{warehouseId}/products', [WarehouseProductController::class, 'attach']);
     Route::put('/warehouses/{warehouseId}/products/{productId}', [WarehouseProductController::class, 'update']);
     Route::delete('/warehouses/{warehouseId}/products/{productId}', [WarehouseProductController::class, 'detach']);
+});
+
+Route::middleware('auth:sanctum')->group(function () {
+    // Route untuk Products
+    Route::get('/products/{id}/stock', [ProductController::class, 'stockSummary']);
+    Route::apiResource('products', ProductController::class); 
 });
