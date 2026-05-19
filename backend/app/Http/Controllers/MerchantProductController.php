@@ -17,7 +17,7 @@ class MerchantProductController extends Controller
 
     public function store(MerchantProductRequest $request, int $merchant) 
     {
-        // PERBAIKAN: Gunakan validated() bukan validate()
+        
         $validated = $request->validated();
         $validated['merchant_id'] = $merchant;
 
@@ -35,13 +35,13 @@ class MerchantProductController extends Controller
         $merchantProduct = $this->merchantProductService->updateStock(
             $merchantId,
             $productId,
-            $validated['stock'], // PERBAIKAN: typo stock_id menjadi stock
+            $validated['stock'], 
             $validated['warehouse_id'] 
         );
 
         return response()->json([
             'message' => 'Stock Updated Successfully.',
-            'data'    => $merchantProduct, // PERBAIKAN: typo date menjadi data
+            'data'    => $merchantProduct, 
         ]);
     }
 
@@ -51,7 +51,7 @@ class MerchantProductController extends Controller
         $this->merchantProductService->removeProductFromMerchant($merchant, $product);
 
         return response()->json([
-            'message' => 'Product detached from merchant successfully', // PERBAIKAN: Typo teks diperbaiki
+            'message' => 'Product detached from merchant successfully', 
         ]);
     }
 }

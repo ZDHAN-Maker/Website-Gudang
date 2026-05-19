@@ -36,7 +36,7 @@ class MerchantProductService
             return $this->merchantProductRepository->create([
                 'merchant_id'  => $data['merchant_id'],
                 'product_id'   => $data['product_id'],
-                'warehouse_id' => $data['warehouse_id'], // PERBAIKAN: Kolom ini wajib dimasukkan
+                'warehouse_id' => $data['warehouse_id'], 
                 'stock'        => $data['stock'],
             ]);
         });
