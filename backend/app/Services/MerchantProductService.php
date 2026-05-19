@@ -2,133 +2,70 @@
 
 namespace App\Services;
 
-use App\Models\Merchant;
 use App\Repositories\MerchantProductRepository;
 use App\Repositories\MerchantRepository;
-use App\Repositories\WarehouseProductRepository;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Validation\ValidationException;
 
 class MerchantProductService
 {
-
     private MerchantRepository $merchantRepository;
     private MerchantProductRepository $merchantProductRepository;
-    private WarehouseProductRepository $warehouseProductRepository;
+    private WarehouseProductService $warehouseProductService; // DIUBAH: Memanggil Service, bukan Repository Gudang
 
     public function __construct(
         MerchantRepository $merchantRepository,
         MerchantProductRepository $merchantProductRepository,
-        WarehouseProductRepository $warehouseProductRepository
+        WarehouseProductService $warehouseProductService 
     ) {
         $this->merchantRepository = $merchantRepository;
         $this->merchantProductRepository = $merchantProductRepository;
-        $this->warehouseProductRepository = $warehouseProductRepository;
+        $this->warehouseProductService = $warehouseProductService;
     }
 
     public function assignProductToMerchant(array $data)
     {
-        return DB::transaction(function () use ($data) {});
+        return DB::transaction(function () use ($data) {
+            // 1. Validasi merchant produk bawaan
+            $existingProduct = $this->merchantProductRepository->getByMerchantAndProduct($data['merchant_id'], $data['product_id']);
+            if ($existingProduct) {
+                throw ValidationException::withMessages(['product' => ['Product already exists in this merchant.']]);
+            }
 
-        if (!$warehouseProduct || $warehouseProduct->stock < $data['stock']) {
-            throw ValidationException::withMessages([
-                'stock' => ['Insufficient stock in Warehouse. ']
+            // 2. Serahkan urusan potong stok gudang ke Service Gudang (Lebih Bersih!)
+            $this->warehouseProductService->deductStock($data['warehouse_id'], $data['product_id'], $data['stock']);
+
+            // 3. Buat produk di merchant
+            return $this->merchantProductRepository->create([
+                'merchant_id' => $data['merchant_id'],
+                'product_id'  => $data['product_id'],
+                'stock'       => $data['stock'],
             ]);
-        }
-
-        $existingProduct = $this->$merchantProductRepository->getByMerchantAndProduct(
-            $data['merchant_id'],
-            $data['product_id']
-        );
-
-        if ($existingProduct) {
-            throw ValidationException::withMessages([
-                'product' => ['Product Allready exist in this merchant']
-            ]);
-        }
-
-        //kurangi stoct product  tersebut pada warehouse terkait
-        $this->warehouseProductRepository->updateStock(
-            $data['warehouse_id'],
-            $data['product_id'],
-            $warehouseProduct->stock - $data['stock']
-        );
+        });
     }
 
-    //update berdasarkanjumlah stock yang ada di merchant
     public function updateStock(int $merchantId, int $productId, int $newStock, int $warehouseId)
     {
         return DB::transaction(function () use ($merchantId, $productId, $newStock, $warehouseId) {
             $existing = $this->merchantProductRepository->getByMerchantAndProduct($merchantId, $productId);
             if (!$existing) {
-                throw ValidationException::withMessages([
-                    'product_id' => 'Product not assigned to this merchant.'
-                ]);
+                throw ValidationException::withMessages(['product_id' => ['Product not assigned to this merchant.']]);
             }
 
-            //cek idwarehouse apakah ada 
-            if (!$warehouseId) {
-                throw ValidationException::withMessages([
-                    'warehouse_id' => 'Warehouse id is required when increasing stock.'
-                ]);
-            }
-
-            // stock produk yang ada di merchant dan lebih dari jumlah stok yang ada  
             $currentStock = $existing->stock;
 
             if ($newStock > $currentStock) {
                 $diff = $newStock - $currentStock;
-
-                $warehouseProduct = $this->warehouseProductRepository->getByWarehouseAndProduct($warehouseId, $productId);
-                if (!$warehouseProduct || $warehouseProduct->stock < $diff) {
-                    throw ValidationException::withMessages([
-                        'stock' => ['Inssuficient Stock in Warehouse.']
-                    ]);
-                }
-
-                $this->warehouseProductRepository->updateStock(
-                    $warehouseId,
-                    $productId,
-                    $warehouseProduct->stock - $diff
-                );
-            }
-
-            // stock produk yang ada di merchant dan kurang dari jumlah stok yang ada 
-            if ($newStock < $currentStock) {
+                // Ambil dari gudang
+                $this->warehouseProductService->deductStock($warehouseId, $productId, $diff);
+            } elseif ($newStock < $currentStock) {
                 $diff = $currentStock - $newStock;
-
-                $warehouseProduct = $this->warehouseProductRepository->getByWarehouseAndProduct($warehouseId, $productId);
-                if (!$warehouseProduct) {
-                    throw ValidationException::withMessages([
-                        'warehouse' => ['Product Not found in warehouse.']
-                    ]);
-                }
-                $this->warehouseProductRepository->updateStock(
-                    $warehouseId,
-                    $productId,
-                    $warehouseProduct->stock + $diff
-                );
+                // Kembalikan ke gudang
+                $this->warehouseProductService->addStock($warehouseId, $productId, $diff);
             }
+
+            $existing->update(['stock' => $newStock]);
+            return $existing;
         });
-    }
-    //menghapus product 
-    public function removeProuctFromMerchant(int $merchantId, int $productId)
-    {
-        //$merchant = Merchant::fingOrFail($merchantId);
-        $merchant = $this->merchantRepository->getById($merchantId, $fields ?? ['*']);
-        if (!$merchant) {
-            throw ValidationException::withMessages([
-                'product_id' => 'Merchant Not Found.'
-            ]);
-        }
-
-        $exists = $this->merchantProductRepository->getByMerchantAndProduct($merchantId, $productId);
-        if (!$exists) {
-            throw ValidationException::withMessages([
-                'product_id' => 'Product not assigned to this merchant.'
-            ]);
-        }
-
-        $merchant->products()->detach($productId);
     }
 }

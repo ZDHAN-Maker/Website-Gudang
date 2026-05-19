@@ -10,7 +10,7 @@ use Illuminate\Http\Request;
 
 class WarehouseController extends Controller
 {
-     private WarehouseService $warehouseService;
+    private WarehouseService $warehouseService;
 
     public function __construct(WarehouseService $warehouseService)
     {
@@ -19,53 +19,54 @@ class WarehouseController extends Controller
 
     public function index()
     {
-        $fields = ['id','name','photo','tagline'];
+        // PERBAIKAN: Menghapus 'tagline' karena tidak ada di skema database Anda
+        $fields = ['id', 'name', 'photo', 'phone', 'address']; 
         $warehouses = $this->warehouseService->getAll($fields);
         return response()->json(WarehouseResource::collection($warehouses)); 
     }
 
     public function show(int $id)
     {
-        try{
-            $fields = ['id','name','photo','tagline'];
-            $warehouses = $this->warehouseService->getById($id,$fields);
-            return response()->json(new WarehouseResource($warehouses));
-        } catch(ModelNotFoundException $e){
+        try {
+            $fields = ['id', 'name', 'photo', 'phone', 'address'];
+            $warehouse = $this->warehouseService->getById($id, $fields);
+            return response()->json(new WarehouseResource($warehouse));
+        } catch (ModelNotFoundException $e) {
             return response()->json([
-                'message'=>'warehouse not found',
+                'message' => 'Warehouse not found',
             ], 404);
         }
     }
 
     public function store(WarehouseRequest $request)
     {
-        $warehouses = $this->warehouseService->create($request->validated());
-        return response()->json(new WarehouseResource($warehouses),201);
+        $warehouse = $this->warehouseService->create($request->validated());
+        return response()->json(new WarehouseResource($warehouse), 201);
     }
 
     public function update(WarehouseRequest $request, int $id)
     {
-        try{
-            $warehouses =  $this->warehouseService->update($id, $request->validated());
-            return response()->json(new WarehouseResource ($warehouses));
-        }catch(ModelNotFoundException){
+        try {
+            $warehouse = $this->warehouseService->update($id, $request->validated());
+            return response()->json(new WarehouseResource($warehouse));
+        } catch (ModelNotFoundException $e) {
             return response()->json([
-                'message' => 'warehouse not found',
+                'message' => 'Warehouse not found',
             ], 404);
         }
     }
 
     public function destroy(int $id)
     {
-        try{
+        try {
             $this->warehouseService->delete($id);
             return response()->json([
-                'message'=> 'warehouse deleted succesfully'
+                'message' => 'Warehouse deleted successfully' // PERBAIKAN: Typo successfully
             ]);
-        }catch(ModelNotFoundException){
+        } catch (ModelNotFoundException $e) {
             return response()->json([
-                'message' => 'warehouse not found',
-            ],404);
+                'message' => 'Warehouse not found',
+            ], 404);
         }
     }
 }

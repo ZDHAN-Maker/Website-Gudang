@@ -4,10 +4,12 @@ namespace App\Repositories;
 
 use App\Models\Warehouse;
 
-class WarehouseRepository{
+class WarehouseRepository 
+{
     public function getAll(array $fields)
     {
-        return Warehouse::select($fields)->with(['products.category'])->lates()->pagiante(10);
+        // PERBAIKAN: Perbaikan typo lates() -> latest() dan pagiante() -> paginate()
+        return Warehouse::select($fields)->with(['products.category'])->latest()->paginate(10);
     }
 
     public function getById(int $id, array $fields)
@@ -15,21 +17,21 @@ class WarehouseRepository{
         return Warehouse::select($fields)->with(['products.category'])->findOrFail($id);
     }
 
-    public function create (array $data)
+    public function create(array $data)
     {
         return Warehouse::create($data);
     }
 
-    public function update (int $id, array $data)
+    public function update(int $id, array $data)
     {
-        $category = Warehouse::findOrFail($id);
-        $category->update($data);
-        return $category;
+        $warehouse = Warehouse::findOrFail($id);
+        $warehouse->update($data);
+        return $warehouse;
     }
 
     public function delete(int $id)
     {
-        $category = Warehouse::findOdFail($id);
-        $category->delete();
+        $warehouse = Warehouse::findOrFail($id);
+        $warehouse->delete();
     }
 }

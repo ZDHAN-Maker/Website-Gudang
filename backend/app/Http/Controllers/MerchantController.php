@@ -4,11 +4,9 @@ namespace App\Http\Controllers;
 
 use App\Http\Requests\MerchantRequest;
 use App\Http\Resources\MerchantResource;
-use App\Models\Merchant;
 use App\Services\MerchantService;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Database\Eloquent\ModelNotFoundException;
-use Illuminate\Http\Request;
 
 class MerchantController extends Controller
 {
@@ -21,15 +19,17 @@ class MerchantController extends Controller
 
     public function index()
     {
-        $fields = ['id', 'name', 'dn', 'tagline'];
-        $merchant = $this->merchantService->getAll($fields);
-        return response()->json(MerchantResource::collection($merchant));
+        // Kolom 'dn' dan 'tagline' dihapus karena tidak ada di migrasi merchants
+        $fields = ['id', 'name', 'address', 'photo', 'phone']; 
+        $merchants = $this->merchantService->getAll($fields);
+        return response()->json(MerchantResource::collection($merchants));
     }
 
     public function show(int $id)
     {
         try {
-            $fields = ['id', 'name', 'photo', 'tagline'];
+            // Kolom 'tagline' dihapus
+            $fields = ['id', 'name', 'photo', 'address', 'phone'];
             $merchant = $this->merchantService->getById($id, $fields);
             return response()->json(new MerchantResource($merchant));
         } catch (ModelNotFoundException $e) {
@@ -42,15 +42,15 @@ class MerchantController extends Controller
     public function store(MerchantRequest $request)
     {
         $merchant = $this->merchantService->create($request->validated());
-        return response()->json(new MerchantResource($merchant),201);
+        return response()->json(new MerchantResource($merchant), 201);
     }
 
     public function update(MerchantRequest $request, int $id)
     {
-        try{
-            $merchant =  $this->merchantService->update($id, $request->validated());
+        try {
+            $merchant = $this->merchantService->update($id, $request->validated());
             return response()->json(new MerchantResource($merchant));
-        }catch(ModelNotFoundException){
+        } catch (ModelNotFoundException $e) {
             return response()->json([
                 'message' => 'merchant not found',
             ], 404);
@@ -59,32 +59,29 @@ class MerchantController extends Controller
 
     public function destroy(int $id)
     {
-        try{
+        try {
             $this->merchantService->delete($id);
             return response()->json([
-                'message'=> 'merchant deleted succesfully'
+                'message' => 'merchant deleted successfully'
             ]);
-        }catch(ModelNotFoundException){
+        } catch (ModelNotFoundException $e) {
             return response()->json([
                 'message' => 'merchant not found',
-            ],404);
+            ], 404);
         }
     }
 
-    public function   getMyMerchantProfile()
+    public function getMyMerchantProfile()
     {
         $userId = Auth::id();
 
-        try{
+        try {
             $merchant = $this->merchantService->getByKeeperId($userId);
             return response()->json(new MerchantResource($merchant));
-        }
-        catch(ModelNotFoundException $e)
-        {
+        } catch (ModelNotFoundException $e) {
             return response()->json([
-                'message' => 'merchant not found fot this user',
-            ],404);
+                'message' => 'merchant not found for this user',
+            ], 404);
         }
     }
-
 }

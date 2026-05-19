@@ -2,28 +2,28 @@
 
 namespace App\Repositories;
 
-use App\Models\Warehouse;
 use App\Models\WarehouseProduct;
 use Illuminate\Validation\ValidationException;
 
-class WarehouseProductRepository {
-    public function getByWarehouseAndProduct(int $warehouseId,int $productId) 
+class WarehouseProductRepository 
+{
+    public function getByWarehouseAndProduct(int $warehouseId, int $productId) 
     {
-        return WarehouseProduct::where('warehouse_id',$warehouseId)
-                        ->where('product_id',$productId)
-                        ->first();
+        return WarehouseProduct::where('warehouse_id', $warehouseId)
+                                ->where('product_id', $productId)
+                                ->first();
     }
         
-    public function updateStock(int $productId, int $warehouseId, $stock) 
+    public function updateStock(int $warehouseId, int $productId, int $stock) 
     {
         $warehouseProduct = $this->getByWarehouseAndProduct($warehouseId, $productId);
-        if(!$warehouseProduct)
-        {
+        if (!$warehouseProduct) {
             throw ValidationException::withMessages([
-                'product_id' => ['product not found for this warehouse']
+                'product_id' => ['Product not found for this warehouse.']
             ]);
         }
-        $warehouseProduct->update(['stock'=>$stock]);
+        
+        $warehouseProduct->update(['stock' => $stock]);
         return $warehouseProduct;
     }
 }

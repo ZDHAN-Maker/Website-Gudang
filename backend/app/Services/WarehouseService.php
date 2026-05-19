@@ -25,10 +25,9 @@ class WarehouseService
         return $this->warehouseRepository->getById($id, $fields ?? ['*']);
     }
 
-    public function create (array $data)
+    public function create(array $data)
     {
-        if(isset($data['photo'])&& $data['photo'] instanceof UploadedFile)
-        {
+        if (isset($data['photo']) && $data['photo'] instanceof UploadedFile) {
             $data['photo'] = $this->uploadPhoto($data['photo']);
         }
 
@@ -37,31 +36,31 @@ class WarehouseService
     
     public function update(int $id, array $data)
     {
-        $fields =['id','photo'];
-        $warehouse =$this->warehouseRepository->getById($id, $fields);
+        $fields = ['id', 'photo'];
+        $warehouse = $this->warehouseRepository->getById($id, $fields);
 
-        if(isset($data['photo'])&& $data['photo'] instanceof UploadedFile)
-        {
-            if(!empty($warehouse->photo))
-            {
-                $this->deletePhoto($warehouse->photo);
+        if (isset($data['photo']) && $data['photo'] instanceof UploadedFile) {
+            // Menggunakan getRawOriginal agar mendapatkan path asli dari DB, bukan URL dari Aksesor
+            if (!empty($warehouse->getRawOriginal('photo'))) {
+                $this->deletePhoto($warehouse->getRawOriginal('photo'));
             }
             $data['photo'] = $this->uploadPhoto($data['photo']);
         }
+
+        // PERBAIKAN: Lupa memanggil repository update dan return data
+        return $this->warehouseRepository->update($id, $data);
     }
 
     public function delete(int $id)
     {
-        $fields =['id','photo'];
-        $warehouse =$this->warehouseRepository->getById($id, $fields);
+        $fields = ['id', 'photo'];
+        $warehouse = $this->warehouseRepository->getById($id, $fields);
 
-        if($warehouse->photo)
-        {
-            $this->deletePhoto($warehouse->photo);
+        if ($warehouse->getRawOriginal('photo')) {
+            $this->deletePhoto($warehouse->getRawOriginal('photo'));
         }
         $this->warehouseRepository->delete($id);
     }
-
 
     public function attachProduct(int $warehouseId, int $productId, int $stock)
     {
@@ -79,12 +78,12 @@ class WarehouseService
 
     public function updateProductStock(int $warehouseId, int $productId, int $stock)
     {   
-        $warehouse = $this->warehouseRepository->getById($warehouseId,['id']);
-        $warehouse->products()->updateExistingPivot($productId,[
+        $warehouse = $this->warehouseRepository->getById($warehouseId, ['id']);
+        $warehouse->products()->updateExistingPivot($productId, [
             'stock' => $stock,
         ]);
 
-        return $warehouse->products()->where('product_id',$productId)->first();
+        return $warehouse->products()->where('product_id', $productId)->first();
     }
 
     private function uploadPhoto(UploadedFile $photo)
@@ -94,11 +93,8 @@ class WarehouseService
 
     private function deletePhoto(string $photoPath)
     {
-        $relativePath= 'warehouses/'. basename($photoPath);
-        if(Storage::disk('public')->exists($relativePath))
-        {
-            Storage::disk('public')->delete($relativePath);
+        if (Storage::disk('public')->exists($photoPath)) {
+            Storage::disk('public')->delete($photoPath);
         }
-
     }
 }
