@@ -13,8 +13,9 @@ return new class extends Migration
     {
         Schema::create('transactions', function (Blueprint $table) {
             $table->id();
-            $table->string('name')->unique();
-            $table->string('phone')->unique();
+            $table->string('invoice_number')->unique();
+            $table->string('name');
+            $table->string('phone');
             $table->unsignedInteger('sub_total');
             $table->unsignedInteger('tax_total');
             $table->unsignedInteger('grand_total')->index();

@@ -5,9 +5,9 @@ namespace App\Repositories;
 use App\Models\MerchantProduct;
 use Illuminate\Validation\ValidationException;
 
-Class MerchantProductRepository
+class MerchantProductRepository
 {
-    public function create(array $data )
+    public function create(array $data)
     {
         return MerchantProduct::create($data);
     }
@@ -15,19 +15,29 @@ Class MerchantProductRepository
     public function getByMerchantAndProduct(int $merchantId, int $productId)
     {
         return MerchantProduct::where('merchant_id', $merchantId)
-                ->where('product_id',$productId)
+                ->where('product_id', $productId)
                 ->first();
     }
 
     public function updateStock(int $merchantId, int $productId, int $stock)
     {
-        $merchantProduct = $this->getByMerchantAndProduct($merchantId,$productId);
-        throw ValidationException::withMessages([
-            'product_id' => ['Product not Found for this merchant']
-        ]);
+        $merchantProduct = $this->getByMerchantAndProduct($merchantId, $productId);
+        
+        // PERBAIKAN: Tambahkan pengecekan IF agar tidak selalu throw error
+        if (!$merchantProduct) {
+            throw ValidationException::withMessages([
+                'product_id' => ['Product not found for this merchant.']
+            ]);
+        }
 
-        $merchantProduct->update(['stock'=> $stock]);
+        $merchantProduct->update(['stock' => $stock]);
 
         return $merchantProduct;
+    }
+
+    // TAMBAHAN: Method untuk menghapus data
+    public function delete(MerchantProduct $merchantProduct)
+    {
+        return $merchantProduct->delete();
     }
 }

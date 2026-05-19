@@ -5,11 +5,9 @@ namespace App\Http\Controllers;
 use App\Http\Requests\MerchantProductRequest;
 use App\Http\Requests\MerchantProductUpdateRequest;
 use App\Services\MerchantProductService;
-use Illuminate\Http\Request;
 
 class MerchantProductController extends Controller
 {
-    //
     private MerchantProductService $merchantProductService;
 
     public function __construct(MerchantProductService $merchantProductService)
@@ -17,15 +15,17 @@ class MerchantProductController extends Controller
         $this->merchantProductService = $merchantProductService;
     }
 
-    public function store(MerchantProductRequest $request, int $merchant) {
-        $validated = $request->validate();
-        $validated['merchant_id'] =  $merchant;
+    public function store(MerchantProductRequest $request, int $merchant) 
+    {
+        // PERBAIKAN: Gunakan validated() bukan validate()
+        $validated = $request->validated();
+        $validated['merchant_id'] = $merchant;
 
         $merchantProduct = $this->merchantProductService->assignProductToMerchant($validated);
         return response()->json([
-            'message' => 'Product Assign to merchant Succesfully',
-            'data' => $merchantProduct,
-        ],201);
+            'message' => 'Product Assigned to merchant Successfully',
+            'data'    => $merchantProduct,
+        ], 201);
     }
 
     public function update(MerchantProductUpdateRequest $request, int $merchantId, int $productId)
@@ -35,23 +35,23 @@ class MerchantProductController extends Controller
         $merchantProduct = $this->merchantProductService->updateStock(
             $merchantId,
             $productId,
-            $validated['stock_id'],
+            $validated['stock'], // PERBAIKAN: typo stock_id menjadi stock
             $validated['warehouse_id'] 
         );
 
         return response()->json([
-            'message' => 'Stock Update Succesfully. ',
-            'date' => $merchantProduct,
+            'message' => 'Stock Updated Successfully.',
+            'data'    => $merchantProduct, // PERBAIKAN: typo date menjadi data
         ]);
     }
 
     public function destroy(int $merchant, int $product)
     {
-        $this->merchantProductService->removeProuctFromMerchant($merchant,$product);
+        // PERBAIKAN: Penulisan nama method disesuaikan
+        $this->merchantProductService->removeProductFromMerchant($merchant, $product);
 
         return response()->json([
-            'message' => 'Merhcnat detach from merchant Successfully',
-            
+            'message' => 'Product detached from merchant successfully', // PERBAIKAN: Typo teks diperbaiki
         ]);
     }
 }

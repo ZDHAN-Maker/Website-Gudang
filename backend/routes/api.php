@@ -7,6 +7,8 @@ use App\Http\Controllers\MerchantController;
 use App\Http\Controllers\MerchantProductController;
 use App\Http\Controllers\ProductController;
 use App\Http\Controllers\WarehouseController;
+use App\Http\Controllers\TransactionController;
+use App\Http\Controllers\TransactionProductController;
 use App\Http\Controllers\WarehouseProductController;
 
 
@@ -24,21 +26,23 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::delete('/categories/{id}', [CategoryController::class, 'destroy']); // Hapus kategori
 });
 
-
 Route::middleware('auth:sanctum')->group(function () {
+
+    // --- ROUTE GROUP: MERCHANT ---
     Route::get('/merchants', [MerchantController::class, 'index']);
-    Route::get('/merchants/{id}', [MerchantController::class, 'show']);
     Route::post('/merchants', [MerchantController::class, 'store']);
+
+    // Tempatkan route statis '/my-merchant' di atas rute dengan wildcard '{id}'
+    Route::get('/my-merchant', [MerchantController::class, 'getMyMerchantProfile']);
+
+    Route::get('/merchants/{id}', [MerchantController::class, 'show']);
     Route::put('/merchants/{id}', [MerchantController::class, 'update']);
     Route::delete('/merchants/{id}', [MerchantController::class, 'destroy']);
-    
-    // Profile merchant berdasarkan user login
-    Route::get('/my-merchant', [MerchantController::class, 'getMyMerchantProfile']);
-});
 
-Route::middleware('auth:sanctum')->group(function () {
+    // --- ROUTE GROUP: MERCHANT PRODUCTS ---
+    // Parameter disamakan menjadi '{merchant}' dan '{product}' agar konsisten
     Route::post('/merchants/{merchant}/products', [MerchantProductController::class, 'store']);
-    Route::put('/merchants/{merchantId}/products/{productId}', [MerchantProductController::class, 'update']);
+    Route::put('/merchants/{merchant}/products/{product}', [MerchantProductController::class, 'update']);
     Route::delete('/merchants/{merchant}/products/{product}', [MerchantProductController::class, 'destroy']);
 });
 
@@ -53,5 +57,21 @@ Route::middleware('auth:sanctum')->group(function () {
 Route::middleware('auth:sanctum')->group(function () {
     // Route untuk Products
     Route::get('/products/{id}/stock', [ProductController::class, 'stockSummary']);
-    Route::apiResource('products', ProductController::class); 
+    Route::apiResource('products', ProductController::class);
+});
+
+Route::middleware('auth:sanctum')->prefix('transactions')->group(function () {
+
+    // URL: GET /api/transactions (Mengambil semua transaksi)
+    Route::get('/', [TransactionController::class, 'index']);
+
+    // URL: POST /api/transactions (Membuat transaksi baru)
+    Route::post('/', [TransactionController::class, 'store']);
+
+    // URL: GET /api/transactions/{id} (Melihat detail transaksi)
+    Route::get('/{id}', [TransactionController::class, 'show']);
+
+    // NESTED ROUTE: Detail produk di dalam transaksi terkait
+    // URL: GET /api/transactions/{transactionId}/products
+    Route::get('/{transactionId}/products', [TransactionProductController::class, 'index']);
 });

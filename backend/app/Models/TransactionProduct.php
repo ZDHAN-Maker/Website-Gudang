@@ -7,12 +7,10 @@ use Illuminate\Database\Eloquent\SoftDeletes;
 
 class TransactionProduct extends Model
 {
-    //
     use SoftDeletes;
+    protected $fillable = ['transaction_id', 'product_id', 'quantity', 'price', 'sub_total'];
 
-    protected $fillable = ['transaction_id','product_id','quantity','proce','sub_total'];
-
-    public  function transaction()
+    public function transaction()
     {
         return $this->belongsTo(Transaction::class);
     }
