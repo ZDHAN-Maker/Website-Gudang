@@ -1,13 +1,12 @@
 import { useState, useEffect } from "react";
-import { useAuth } from "../context/AuthContext";
-// Import komponen chart dari Recharts
+import { useAuth } from "../context/AuthContext"; 
+import api from "../api/api"; 
 import { AreaChart, Area, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer } from "recharts";
 
 export default function Overview() {
   const { user, isAdmin } = useAuth();
   const userName = user?.name || "User";
 
-  // State untuk menampung data riil dari backend/API
   const [dashboardData, setDashboardData] = useState({
     totalProduk: 0,
     totalGudang: 0,
@@ -17,7 +16,7 @@ export default function Overview() {
     changeGudang: "Stabil",
     changeMerchant: "0%",
     changeTransaksi: "0%",
-    grafikStok: [], // Data untuk tren fluktuasi
+    grafikStok: [], 
     barangMasuk: [],
     barangKeluar: []
   });
@@ -25,28 +24,27 @@ export default function Overview() {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
 
-  // Mengambil data otomatis saat halaman diakses
   useEffect(() => {
-    const fetchDashboardData = async () => {
-      try {
-        setLoading(true);
-        // GANTI URL INI dengan endpoint API backend Anda yang sebenarnya
-        const response = await fetch("https://api.anda.com/v1/dashboard/overview");
-        if (!response.ok) throw new Error("Gagal memuat data dashboard");
-        
-        const data = await response.json();
-        setDashboardData(data);
-      } catch (err) {
-        setError(err.message);
-      } finally {
-        setLoading(false);
-      }
-    };
+  const fetchDashboardData = async () => {
+    try {
+      setLoading(true);
+      setError(null);
+      
+      const response = await api.get("/dashboard/overview");
+      
+      setDashboardData(response.data);
+    } catch (err) {
+      console.error("Error fetching dashboard:", err);
+      const errorMessage = err.response?.data?.message || err.message || "Gagal memuat data dashboard";
+      setError(errorMessage);
+    } finally {
+      setLoading(false);
+    }
+  };
 
-    fetchDashboardData();
-  }, []);
+  fetchDashboardData();
+}, []);
 
-  // Struktur stats menggunakan data dari state
   const stats = [
     { 
       label: "Total Produk", 
@@ -85,7 +83,6 @@ export default function Overview() {
     amber: "bg-amber-500/10 text-amber-400 border-amber-500/20",
   };
 
-  // Tampilan Loading State
   if (loading) {
     return (
       <div className="p-6 space-y-6 bg-slate-950 min-h-screen flex items-center justify-center text-slate-400">
@@ -95,11 +92,13 @@ export default function Overview() {
     );
   }
 
-  // Tampilan Error State
   if (error) {
     return (
       <div className="p-6 bg-slate-950 min-h-screen flex items-center justify-center text-rose-400">
-        Gagal memuat data: {error}. Pastikan server backend Anda menyala.
+        <div className="text-center">
+           <svg className="w-12 h-12 mx-auto mb-3 text-rose-500" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"/></svg>
+           <p>{error}</p>
+        </div>
       </div>
     );
   }
@@ -116,7 +115,7 @@ export default function Overview() {
         </p>
       </div>
 
-      {/* Stats Cards (Otomatis & Dinamis) */}
+      {/* Stats Cards */}
       <div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-4 gap-4">
         {stats.map((s, i) => (
           <div key={i} className="bg-slate-900 border border-slate-800 rounded-2xl p-5 hover:border-slate-700 transition-colors">
@@ -201,6 +200,9 @@ export default function Overview() {
                     <td className="py-3 text-xs">{item.gudang}</td>
                   </tr>
                 ))}
+                {dashboardData.barangMasuk.length === 0 && (
+                  <tr><td colSpan="3" className="py-4 text-center text-slate-500">Belum ada data barang masuk</td></tr>
+                )}
               </tbody>
             </table>
           </div>
@@ -233,6 +235,9 @@ export default function Overview() {
                     <td className="py-3 text-xs">{item.merchant}</td>
                   </tr>
                 ))}
+                {dashboardData.barangKeluar.length === 0 && (
+                  <tr><td colSpan="3" className="py-4 text-center text-slate-500">Belum ada data barang keluar</td></tr>
+                )}
               </tbody>
             </table>
           </div>

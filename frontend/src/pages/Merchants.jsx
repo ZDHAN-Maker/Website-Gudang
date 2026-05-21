@@ -151,8 +151,11 @@ export default function Merchants() {
   };
 
   return (
-    <div className="p-6 space-y-6 min-h-screen bg-slate-950 text-slate-100">
-      {/* Header */}
+    <div className="min-h-screen bg-slate-950 relative overflow-hidden p-6 space-y-6">
+      <div className="absolute inset-0 opacity-[0.03]" style={{
+        backgroundImage: "linear-gradient(#fff 1px, transparent 1px), linear-gradient(90deg, #fff 1px, transparent 1px)",
+        backgroundSize: "40px 40px"
+      }} />
       <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
         <div>
           <h1 className="text-2xl font-bold text-white">Merchant / Toko</h1>

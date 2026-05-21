@@ -10,7 +10,7 @@ use App\Http\Controllers\WarehouseController;
 use App\Http\Controllers\TransactionController;
 use App\Http\Controllers\TransactionProductController;
 use App\Http\Controllers\WarehouseProductController;
-
+use App\Http\Controllers\DashboardController;
 
 Route::post('/token-login', [AuthController::class, 'tokenLogin']);
 Route::post('/register', [AuthController::class, 'register']);
@@ -74,4 +74,8 @@ Route::middleware('auth:sanctum')->prefix('transactions')->group(function () {
     // NESTED ROUTE: Detail produk di dalam transaksi terkait
     // URL: GET /api/transactions/{transactionId}/products
     Route::get('/{transactionId}/products', [TransactionProductController::class, 'index']);
+});
+
+Route::middleware('auth:sanctum')->group(function () {
+    Route::get('/dashboard/overview', [DashboardController::class, 'getOverview']);
 });

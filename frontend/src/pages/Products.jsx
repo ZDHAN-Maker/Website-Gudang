@@ -143,7 +143,11 @@ export default function Products() {
   const formatPrice = (p) => (p ? `Rp ${Number(p).toLocaleString("id-ID")}` : "-");
 
   return (
-    <div className="p-6 space-y-6 ">
+    <div className="min-h-screen bg-slate-950 relative overflow-hidden p-6 space-y-6 ">
+      <div className="absolute inset-0 opacity-[0.03]" style={{
+        backgroundImage: "linear-gradient(#fff 1px, transparent 1px), linear-gradient(90deg, #fff 1px, transparent 1px)",
+        backgroundSize: "40px 40px"
+      }} />
       {/* Header */}
       <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
         <div>
