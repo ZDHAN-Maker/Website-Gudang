@@ -16,9 +16,7 @@ function App() {
       {/* Parent dashboard */}
       <Route path="/dashboard" element={<Dashboard />}>
         <Route index element={<Overview />} />
-        
         <Route path="overview" element={<Overview />} />
-        
         <Route path="products" element={<Product />} />
         <Route path="transactions" element={<Transaction />} />
         <Route path="categories" element={<Categories />} />

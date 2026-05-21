@@ -8,7 +8,7 @@ use App\Models\Merchant;
 use App\Models\Transaction;
 use App\Models\WarehouseProduct;
 use App\Models\MerchantProduct;
-use App\Repositories\DashboardRepositoryInterface;
+use App\Repositories\Contracts\DashboardRepositoryInterface;
 use Carbon\Carbon;
 use Illuminate\Support\Facades\DB;
 

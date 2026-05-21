@@ -19,7 +19,7 @@ Route::post('/logout', [AuthController::class, 'logout']);
 
 
 Route::middleware('auth:sanctum')->group(function () {
-    Route::get('/categories', [CategoryController::class, 'index']);       // List semua kategori
+    Route::get('/categories', [CategoryController::class, 'index']);       
     Route::get('/categories/{id}', [CategoryController::class, 'show']);   // Tampilkan satu kategori
     Route::post('/categories', [CategoryController::class, 'store']);      // Buat kategori baru
     Route::put('/categories/{id}', [CategoryController::class, 'update']); // Update kategori
