@@ -4,7 +4,7 @@ import api from "../api/api";
 export default function Transaction() {
   const [transactions, setTransactions] = useState([]);
   const [loading, setLoading] = useState(true);
-  
+
   // State untuk Modal Detail
   const [selectedTransaction, setSelectedTransaction] = useState(null);
   const [transactionProducts, setTransactionProducts] = useState([]);
@@ -25,16 +25,23 @@ export default function Transaction() {
     try {
       setLoading(true);
       const response = await api.get("/transactions");
-      const incomingData = response.data?.data || response.data;
-      if (Array.isArray(incomingData)) {
-        setTransactions(incomingData);
+
+      // Deteksi lokasi array transaksi di dalam response dari Laravel & Axios
+      let transactionsArray = [];
+      if (Array.isArray(response.data)) {
+        transactionsArray = response.data;
+      } else if (Array.isArray(response.data?.data)) {
+        transactionsArray = response.data.data;
+      } else if (Array.isArray(response.data?.data?.data)) {
+        transactionsArray = response.data.data.data;
       } else {
-        console.error("Format API salah, ekspektasi Array tapi menerima:", incomingData);
-        setTransactions([]);
+        console.error("Format API tidak dikenali:", response.data);
       }
+
+      setTransactions(transactionsArray);
     } catch (error) {
       console.error("Gagal mengambil data transaksi:", error);
-      setTransactions([]); 
+      setTransactions([]);
     } finally {
       setLoading(false);
     }
@@ -44,6 +51,7 @@ export default function Transaction() {
     fetchTransactions();
   }, []);
 
+  // 2. Fetch Detail & Produk Transaksi (Membuka Modal)
   // 2. Fetch Detail & Produk Transaksi (Membuka Modal)
   const handleViewDetail = async (id) => {
     setIsModalOpen(true);
@@ -57,10 +65,20 @@ export default function Transaction() {
         api.get(`/transactions/${id}/products`),
       ]);
 
+      // Set Detail Transaksi
       setSelectedTransaction(detailRes.data?.data || detailRes.data);
-      
-      const incomingProducts = productsRes.data?.data || productsRes.data;
-      setTransactionProducts(Array.isArray(incomingProducts) ? incomingProducts : []);
+
+      // Deteksi lokasi array produk (jaga-jaga jika produk juga dipaginate)
+      let productsArray = [];
+      if (Array.isArray(productsRes.data)) {
+        productsArray = productsRes.data;
+      } else if (Array.isArray(productsRes.data?.data)) {
+        productsArray = productsRes.data.data;
+      } else if (Array.isArray(productsRes.data?.data?.data)) {
+        productsArray = productsRes.data.data.data;
+      }
+
+      setTransactionProducts(productsArray);
     } catch (error) {
       console.error("Gagal mengambil detail transaksi:", error);
     } finally {
@@ -76,18 +94,18 @@ export default function Transaction() {
 
   return (
     <div className="min-h-screen bg-slate-950 relative overflow-hidden p-6 space-y-6">
-      <div className="absolute inset-0 opacity-[0.03]" style={{
+      <div className="absolute inset-0 opacity-[0.03] pointer-events-none" style={{
         backgroundImage: "linear-gradient(#fff 1px, transparent 1px), linear-gradient(90deg, #fff 1px, transparent 1px)",
         backgroundSize: "40px 40px"
       }} />
-      
+
       {/* Glow blobs */}
       <div className="absolute top-1/4 left-1/4 w-96 h-96 bg-blue-600/10 rounded-full blur-3xl pointer-events-none" />
       <div className="absolute bottom-1/4 right-1/4 w-80 h-80 bg-indigo-600/10 rounded-full blur-3xl pointer-events-none" />
 
       {/* Konten Utama */}
       <div className="relative z-10 max-w-7xl mx-auto">
-        
+
         {/* Header Section */}
         <div className="flex flex-col md:flex-row md:items-center justify-between mb-8 gap-4">
           <div>
@@ -111,7 +129,7 @@ export default function Transaction() {
           </div>
         ) : (
           <div className="bg-slate-900 border border-slate-700/50 rounded-2xl shadow-2xl shadow-black/50 overflow-hidden">
-            
+
             {/* Tampilan Desktop: Tabel */}
             <div className="hidden md:block overflow-x-auto">
               <table className="w-full text-left border-collapse">
@@ -188,7 +206,7 @@ export default function Transaction() {
       {isModalOpen && (
         <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-950/80 backdrop-blur-sm">
           <div className="bg-slate-900 border border-slate-700/50 rounded-2xl shadow-2xl shadow-black/50 w-full max-w-2xl overflow-hidden flex flex-col max-h-[90vh]">
-            
+
             {/* Modal Header */}
             <div className="px-6 py-4 border-b border-slate-700/50 flex justify-between items-center bg-slate-800/30">
               <h2 className="text-lg font-bold text-white">Detail Transaksi</h2>
@@ -207,7 +225,7 @@ export default function Transaction() {
                 </div>
               ) : selectedTransaction ? (
                 <div className="space-y-6">
-                  
+
                   {/* Info Pelanggan */}
                   <div className="grid grid-cols-2 gap-4 bg-slate-800/50 p-4 rounded-xl border border-slate-700/50">
                     <div>
@@ -265,14 +283,14 @@ export default function Transaction() {
 
             {/* Modal Footer */}
             <div className="px-6 py-4 border-t border-slate-700/50 bg-slate-800/30 flex justify-end">
-              <button 
+              <button
                 onClick={closeModal}
                 className="px-5 py-2 bg-slate-800 border border-slate-600 text-slate-300 rounded-xl hover:bg-slate-700 hover:text-white font-medium text-sm transition-colors"
               >
                 Tutup
               </button>
             </div>
-            
+
           </div>
         </div>
       )}
