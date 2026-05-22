@@ -5,11 +5,13 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Support\Facades\Storage;
+use Illuminate\Database\Eloquent\Casts\Attribute;
 
 class Product extends Model
 {
     use SoftDeletes;
-    protected $fillable =['name', 'thumbnail', 'about','price' , 'category_id',' is_popular'];
+
+    protected $fillable = ['name', 'thumbnail', 'about', 'price', 'category_id', 'is_popular'];
 
     public function category()
     {
@@ -18,16 +20,16 @@ class Product extends Model
 
     public function merchant()
     {
-        return $this->belongsToMany(Merchant::class, 'merchant_product')
-                    ->withPivot('stock')
-                    ->withTimestamps();
+        return $this->belongsToMany(Merchant::class, 'merchant_products')
+            ->withPivot('stock')
+            ->withTimestamps();
     }
 
     public function warehouse()
     {
-        return $this->belongsToMany(Warehouse::class,'warehouse_product')
-                    ->withPivot('stock')
-                    ->withTimestamps();
+        return $this->belongsToMany(Warehouse::class, 'warehouse_products')
+            ->withPivot('stock')
+            ->withTimestamps();
     }
 
     public function transaction()
@@ -37,20 +39,26 @@ class Product extends Model
 
     public function getWarehouseProductStock()
     {
-        return $this->warehouse()->sum('stock');
+        if ($this->relationLoaded('warehouse')) {
+            return $this->warehouse->sum('pivot.stock');
+        }
+        // Pastikan di sini juga pakai 's' jika kamu tidak pakai eager loading
+        return $this->warehouse()->sum('warehouse_products.stock');
     }
 
     public function getMerchantProductStock()
     {
-        return $this->merchants()->sum('stock');
+        if ($this->relationLoaded('merchant')) {
+            return $this->merchant->sum('pivot.stock');
+        }
+        // Pastikan di sini juga pakai 's'
+        return $this->merchant()->sum('merchant_products.stock');
     }
 
-    public function getThumbnailAttribut($value)
+    protected function thumbnail(): Attribute
     {
-        if (!$value)
-        {
-            return null; //no image avaiulable
-        }
-        return url(Storage::url($value)); 
+        return Attribute::make(
+            get: fn($value) => $value ? url(Storage::url($value)) : null,
+        );
     }
 }

@@ -73,14 +73,17 @@ class ProductService
      */
     public function getStockSummary(int $id)
     {
-        $product = Product::findOrFail($id);
+        $product = Product::with(['warehouse', 'merchant'])->findOrFail($id);
+
+        $warehouseStock = $product->warehouse->sum('pivot.stock');
+        $merchantStock = $product->merchant->sum('pivot.stock');
 
         return [
             'product_id' => $product->id,
             'product_name' => $product->name,
-            'warehouse_stock' => $product->getWarehouseProductStock(),
-            'merchant_stock' => $product->getMerchantProductStock(),
-            'total_stock' => $product->getWarehouseProductStock() + $product->getMerchantProductStock()
+            'warehouse_stock' => $warehouseStock,
+            'merchant_stock' => $merchantStock,
+            'total_stock' => $warehouseStock + $merchantStock
         ];
     }
 }

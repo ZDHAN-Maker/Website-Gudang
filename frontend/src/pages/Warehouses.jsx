@@ -128,7 +128,7 @@ export default function Warehouses() {
 
   return (
     <div className="min-h-screen bg-slate-950 relative overflow-hidden p-4 md:p-8">
-      <div className="absolute inset-0 opacity-[0.03]" style={{
+      <div className="absolute inset-0 opacity-[0.03] pointer-events-none" style={{
         backgroundImage: "linear-gradient(#fff 1px, transparent 1px), linear-gradient(90deg, #fff 1px, transparent 1px)",
         backgroundSize: "40px 40px"
       }} />
