@@ -7,6 +7,7 @@ import Warehouses from "./pages/Warehouses.jsx";
 import Merchants from "./pages/Merchants.jsx";
 import Product from "./pages/Products.jsx";
 import Transaction from "./pages/Transactions.jsx";
+import WarehouseProducts from "./pages/WarehouseProducts.jsx";
 
 function App() {
   return (
@@ -17,6 +18,7 @@ function App() {
       <Route path="/dashboard" element={<Dashboard />}>
         <Route index element={<Overview />} />
         <Route path="overview" element={<Overview />} />
+        <Route path="warehouses/:warehouseId/products" element={<WarehouseProducts />} />
         <Route path="products" element={<Product />} />
         <Route path="transactions" element={<Transaction />} />
         <Route path="categories" element={<Categories />} />

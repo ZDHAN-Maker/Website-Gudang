@@ -1,4 +1,5 @@
 import { useState, useEffect, useRef } from "react";
+import { useNavigate } from "react-router-dom";
 import api from "../api/api";
 
 const EMPTY_FORM = { name: "", address: "", phone: "", photo: null };
@@ -14,12 +15,11 @@ export default function Warehouses() {
   const [error, setError] = useState("");
   const [deleteId, setDeleteId] = useState(null);
   const fileRef = useRef();
-
+  const navigate = useNavigate();
   const fetchWarehouses = async () => {
     setLoading(true);
     try {
       const res = await api.get("/warehouses");
-      // Menyesuaikan dengan format response Laravel Resource (biasanya dibungkus 'data')
       setWarehouses(res.data.data || res.data);
     } catch {
       setWarehouses([]);
@@ -82,16 +82,16 @@ export default function Warehouses() {
     e.preventDefault();
     setSaving(true);
     setError("");
-    
+
     const fd = new FormData();
     fd.append("name", form.name);
     fd.append("address", form.address);
     fd.append("phone", form.phone);
     if (form.photo) fd.append("photo", form.photo);
-    
+
     // Laravel membutuhkan _method PUT untuk update yang mengandung file multipart/form-data
     if (editId) fd.append("_method", "PUT");
-    
+
     try {
       if (editId) {
         await api.post(`/warehouses/${editId}`, fd, {
@@ -219,11 +219,13 @@ export default function Warehouses() {
                     <td className="px-6 py-4 text-right">
                       <div className="flex items-center justify-end gap-1.5 opacity-100 sm:opacity-0 sm:group-hover:opacity-100 transition-opacity">
                         <button
-                          onClick={() => console.log(`Navigasi ke /warehouses/${w.id}/products`)} // Ganti dengan routing Anda (misal useNavigate)
+                          onClick={() => navigate(`/dashboard/warehouses/${w.id}/products`)}
                           className="p-2 rounded-lg text-slate-400 hover:text-emerald-400 hover:bg-emerald-500/10 transition-all"
                           title="Kelola Produk & Stok"
                         >
-                          <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="2"><path strokeLinecap="round" strokeLinejoin="round" d="M20 7l-8-4-8 4m16 0l-8 4m8-4v10l-8 4m0-10L4 7m8 4v10M4 7v10l8 4" /></svg>
+                          <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="2">
+                            <path strokeLinecap="round" strokeLinejoin="round" d="M20 7l-8-4-8 4m16 0l-8 4m8-4v10l-8 4m0-10L4 7m8 4v10M4 7v10l8 4" />
+                          </svg>
                         </button>
                         <button
                           onClick={() => openEdit(w)}
